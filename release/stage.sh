@@ -51,13 +51,13 @@ fi
 log_line "OK!" 1
 
 log_line "Staging 'update'"
-mkdir -p "${STAGING_DIR}/update/"
-rsync -ah "${MIXER_DIR}/update/www/" "${STAGING_DIR}/update/"
+mkdir -p "${UPDATE_DIR}/"
+rsync -ah "${MIXER_UPDATE_DIR}/" "${UPDATE_DIR}/"
 log_line "OK!" 1
 
 log_line "Staging 'release'"
-mkdir -p "${STAGING_DIR}/releases/${MIX_VERSION}"
-rsync -ah "${release_dir}/" "${STAGING_DIR}/releases/${MIX_VERSION}/"
+mkdir -p "${RELEASES_DIR}/${MIX_VERSION}"
+rsync -ah "${release_dir}/" "${RELEASES_DIR}/${MIX_VERSION}/"
 log_line "OK!" 1
 
 pushd "${STAGING_DIR}" > /dev/null

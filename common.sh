@@ -83,7 +83,7 @@ get_downstream_version() {
         error "Downstream Clear Linux version number seems corrupted."
         exit 2
     else
-        DS_FORMAT=$(cat "${STAGING_DIR}/update/${DS_LATEST}/format" 2>/dev/null) || true
+        DS_FORMAT=$(cat "${UPDATE_DIR}/${DS_LATEST}/format" 2>/dev/null) || true
         if [[ -z "${DS_FORMAT}" ]]; then
             error "Failed to fetch Downstream latest format."
             exit 2

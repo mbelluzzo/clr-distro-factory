@@ -33,7 +33,7 @@ create_image() {
 
     pushd "${WORK_DIR}" > /dev/null
     sudo -E ister.py -s "${MIXER_DIR}/Swupd_Root.pem" -L debug -F \
-        -C "file://${MIXER_DIR}/update/www" -V "file://${MIXER_DIR}/update/www" \
+        -C "file://${MIXER_UPDATE_DIR}" -V "file://${MIXER_UPDATE_DIR}" \
         -f "${format}" -t "${image}" > "${ister_log}" 2>&1
     local ister_ret=$?
     sudo rm -rf "${tempdir}"
@@ -80,7 +80,7 @@ if [[ -z "${image_list}" ]]; then
     exit 0
 fi
 
-format=$(< "${MIXER_DIR}/update/www/${MIX_VERSION}/format")
+format=$(< "${MIXER_UPDATE_DIR}/${MIX_VERSION}/format")
 if [[ -z "${format}" ]]; then
     error "Failed to fetch Downstream current format."
     exit 1

@@ -47,7 +47,7 @@ fi
 ret=0
 TMP_PREV_LIST=$(mktemp)
 TMP_CURR_LIST=$(mktemp)
-PKG_LIST_PATH="${STAGING_DIR}/releases/${DS_LATEST}/${PKG_LIST_FILE}-${DS_LATEST}.txt"
+PKG_LIST_PATH="${RELEASES_DIR}/${DS_LATEST}/${PKG_LIST_FILE}-${DS_LATEST}.txt"
 
 if ! cat "${PKG_LIST_PATH}" > "${TMP_PREV_LIST}"; then
     warn "Failed to fetch Downstream PREVIOUS Package List" "Assuming empty"

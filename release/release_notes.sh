@@ -26,7 +26,7 @@ calculate_diffs() {
 
     # Collecting package data for old version
     if [[ -n ${DS_LATEST} ]]; then
-        packages_path=${STAGING_DIR}/releases/${DS_LATEST}/${PKG_LIST_FILE}-${DS_LATEST}.txt
+        packages_path=${RELEASES_DIR}/${DS_LATEST}/${PKG_LIST_FILE}-${DS_LATEST}.txt
         assert_file "${packages_path}"
 
         old_package_list=$(sed -r 's/(.*)-(.*)-/\1\t\2\t/' "${packages_path}")
@@ -78,7 +78,7 @@ calculate_diffs() {
 generate_release_notes() {
     calculate_diffs
 
-    local downstream_format=$(< "${MIXER_DIR}/update/www/${MIX_VERSION}/format")
+    local downstream_format=$(< "${MIXER_UPDATE_DIR}/${MIX_VERSION}/format")
 
     cat > ${RELEASE_NOTES} << EOL
 Release Notes for ${MIX_VERSION}
