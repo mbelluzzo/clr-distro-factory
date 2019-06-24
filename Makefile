@@ -1,3 +1,16 @@
+NAMESPACE ?= developer-distro
+BUILDER_DIR ?= $(CURDIR)/builder/
+CONFIG_REPO_HOST ?= $(BUILDER_DIR)
+CLR_BUNDLES ?= "bootloader kernel-native os-core os-core-update"
+
+HOSTNAME ?= $(shell hostname -f)
+DISTRO_URL ?= http://$(HOSTNAME):8000/
+
+CONFIG_REPO := $(CONFIG_REPO_HOST)/$(NAMESPACE)
+MIXER_DIR := $(BUILDER_DIR)/mixer
+STAGING_DIR := $(BUILDER_DIR)/stage
+WORK_DIR := $(BUILDER_DIR)/work
+
 common_CHECKOPTS := --exclude=2034,2164
 common_SRC := $(wildcard *.sh)
 
@@ -42,18 +55,6 @@ all:
 	@echo "koji steps: $(koji_STEPS)"
 	@echo ""
 	@echo "watcher steps: $(watcher_STEPS)"
-
-NAMESPACE ?= developer-distro
-CONFIG_REPO_HOST ?= $(CURDIR)/builder/
-CLR_BUNDLES ?= "bootloader kernel-native os-core os-core-update"
-
-HOSTNAME := $(shell hostname -f)
-DISTRO_URL ?= http://$(HOSTNAME):8000/
-
-MIXER_DIR := $(CURDIR)/builder/mixer
-CONFIG_REPO := $(CURDIR)/builder/$(NAMESPACE)
-STAGING_DIR := $(CURDIR)/builder/stage
-WORK_DIR := $(CURDIR)/builder/work
 
 $(MIXER_DIR) $(STAGING_DIR) $(WORK_DIR):
 	@mkdir -p $@
@@ -100,7 +101,7 @@ serve: $(STAGING_DIR)
 
 .PHONY: clean
 clean:
-	rm -rf $(CURDIR)/builder
+	rm -rf $(BUILDER_DIR)
 
 # Static Code Analysis 
 # ====================
