@@ -49,7 +49,7 @@ build_bundles() {
 
     log_line "Building Bundles:"
     log_line
-    local mixer_opts_bundles=""
+    local mixer_opts_bundles="--clean"
     if function_exists sign_update; then
         mixer_opts_bundles+=" --no-signing"
     fi
