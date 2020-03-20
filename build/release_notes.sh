@@ -20,56 +20,46 @@ var_load MIX_VERSION
 
 calculate_diffs() {
     local packages_path
+    local -A packages
 
     # Collecting package data for old version
     if [[ -n ${DISTRO_LATEST} ]]; then
         packages_path=${STAGING_DIR}/releases/${DISTRO_LATEST}/${PKG_LIST_FILE}-${DISTRO_LATEST}.txt
         assert_file "${packages_path}"
 
-        old_package_list=$(sed -r 's/(.*)-(.*)-/\1\t\2\t/' "${packages_path}")
+        old_package_list=$(sed -r 's/(.*)-(.*-.*)/\1\t\2/' "${packages_path}")
     else
         old_package_list=""
     fi
+    while read NO VRO ; do
+        packages[${NO}]="${VRO}"
+    done <<< $old_package_list
 
     # Collecting package data for new version
     packages_path=${WORK_DIR}/${PKG_LIST_FILE}
     if [[ -f ${packages_path} ]]; then
-        new_package_list=$(sed -r 's/(.*)-(.*)-/\1\t\2\t/' "${packages_path}")
+        new_package_list=$(sed -r 's/(.*)-(.*-.*)/\1\t\2/' "${packages_path}")
     else
         new_package_list=""
     fi
 
-    # calculate added & changed packages
-    while read NN VN RN ; do
-        found=false
-        while read NO VO RO ; do
-            if [[ "${NN}" == "${NO}" ]] ; then
-                if [[ "${RN}" != "${RO}" ]] || [[ "${VN}" != "${VO}" ]]  ; then
-                    pkgs_changed+=$(printf "\\n    %s    %s-%s -> %s-%s" "${NN}" "${VO}" "${RO}" "${VN}" "${RN}")
-                fi
-                found=true
-                break
+    # Find added & changed packages
+    while read NN VRN ; do
+        if [[ ${packages[${NN}]+_} ]]; then
+            if [[ "${packages[${NN}]}" != "${VN}-${RN}" ]]; then
+                pkgs_changed+=$(printf "\\n    %s    %s -> %s" "${NN}" "${VRO}" "${VRN}")
             fi
-        done <<< $old_package_list
-        if ! ${found} ; then
-            pkgs_added+=$(printf "\\n    %s    %s-%s" "${NN}" "${VN}" "${RN}")
+
+            unset packages["${NN}"]
+        else
+            pkgs_added+=$(printf "\\n    %s    %s" "${NN}" "${VRN}")
         fi
     done <<< $new_package_list
 
-    # calculate removed packages
-    while read NO VO RO ; do
-        found=false
-        [[ -z ${NO} ]] && continue
-        while read NN VN RN ; do
-            if [[ "${NO}" == "${NN}" ]] ; then
-                found=true
-                break
-            fi
-        done <<< $new_package_list
-        if ! ${found} ; then
-            pkgs_removed+=$(printf "\\n    %s    %s-%s" "${NO}" "${VO}" "${RO}")
-        fi
-    done <<< $old_package_list
+    # Find removed packages
+    for NO in "${!packages[@]}"; do
+        pkgs_removed+=$(printf "\\n    %s    %s" "${NO}" "${packages[${NO}]}")
+    done
 }
 
 generate_release_notes() {
